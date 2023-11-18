@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios"; // Import Axios
 import TosModal from "../LoginPage/TosModal";
 import LoginPage from "../LoginPage/LoginPage";
 function RegistrationPage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [showTosModal, setShowTosModal] = useState(false);
+  const [userCreated, setUserCreated] = useState(false);
+
   const translations = {
     English: {
       register: "Register",
@@ -128,6 +132,85 @@ function RegistrationPage() {
     setShowTosModal(false);
   };
 
+  const handleCreateUser = () => {
+    // Get input field values
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const tosCheckbox = document.getElementById("tosCheckbox");
+
+    // Validate username and password
+    if (username.length < 3) {
+      // Show toast message for invalid username
+      toast.error("Username must be at least 3 characters.");
+      return;
+    }
+
+    if (password.length < 6) {
+      // Show toast message for invalid password
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      // Show toast message for password mismatch
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    if (!tosCheckbox.checked) {
+      // Show toast message if the checkbox is not checked
+      toast.error("Please agree to the Terms of Service.");
+      return;
+    }
+    console.log(username, email, password, confirmPassword);
+
+    // Make API request to create user
+    axios
+      .post("http://localhost:8080/Register/createUser", {
+        username,
+        email,
+        password,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          // Show toast message for successful user creation
+          toast.success("User created successfully!");
+          setUserCreated(true);
+
+          // Additional logic, e.g., redirect to login page
+        } else {
+          // Handle other response statuses if needed
+          toast.error("Error creating user. Please try again.");
+        }
+      })
+      .catch((error) => {
+        // Show toast message for error during user creation
+        if (error.response && error.response.status === 400) {
+          toast.error("Username or email already exists.");
+        } else {
+          toast.error("Error creating user. Please try again.");
+        }
+      });
+  };
+  useEffect(() => {
+    if (userCreated) {
+      // Wait for 2 seconds
+      const timeoutId = setTimeout(() => {
+        // Additional logic or actions after user creation
+        // For example, redirect to another page or perform other actions
+        console.log(
+          "User created. Redirecting or performing additional actions..."
+        );
+        // You can redirect to the login page or perform other actions
+        setShowRegisterForm(true);
+      }, 2000);
+
+      // Clear the timeout to avoid side effects
+      return () => clearTimeout(timeoutId);
+    }
+  }, [userCreated]);
   return (
     <div
       style={{
@@ -169,6 +252,8 @@ function RegistrationPage() {
           >
             {translations[selectedLanguage].loginArea}
           </h1>
+          <ToastContainer />
+
           <div
             style={{
               display: "flex",
@@ -278,6 +363,7 @@ function RegistrationPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="username"
                 placeholder="min 3 chars"
                 type="text"
                 required
@@ -299,6 +385,7 @@ function RegistrationPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="email"
                 placeholder="example@mail.com"
                 type="text"
                 required
@@ -320,6 +407,7 @@ function RegistrationPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="password"
                 type="password"
                 placeholder="min 6 chars"
                 required
@@ -341,6 +429,7 @@ function RegistrationPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="confirmPassword"
                 type="password"
                 required
                 style={{
@@ -383,13 +472,15 @@ function RegistrationPage() {
                 cursor: "pointer",
               }}
             >
-              <input type="checkbox" /> {translations[selectedLanguage].TOS}
+              <input id="tosCheckbox" type="checkbox" />{" "}
+              {translations[selectedLanguage].TOS}
               <span onClick={handleTosClick} style={{ color: "#2C75C8" }}>
                 <strong>TOS</strong>
               </span>
             </label>
 
             <button
+              onClick={handleCreateUser}
               style={{
                 display: "flex",
                 alignItems: "center",
