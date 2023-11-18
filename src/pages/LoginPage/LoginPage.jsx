@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import TosModal from "./TosModal";
 import RegistrationPage from "../RegistrationPage/RegistrationPage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios"; // Import Axios
 
 function LoginPage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
@@ -93,6 +96,52 @@ function LoginPage() {
   const handleCloseTosModal = () => {
     setShowTosModal(false);
   };
+  const handleLogin = () => {
+    // Get input field values
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const tosCheckbox = document.getElementById("tosCheckbox");
+
+    // Validate username and password
+
+    if (!tosCheckbox.checked) {
+      // Show toast message if the checkbox is not checked
+      toast.error("Please agree to the Terms of Service.");
+      return;
+    }
+
+    // Make API request to create user
+    axios
+      .post("http://localhost:8080/Login/LoginUser", {
+        username,
+        password,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          // Store the token in a secure way (e.g., HTTP-only cookie)
+          const token = response.data.token;
+          // Add logic to store the token securely, e.g., in an HTTP-only cookie
+          document.cookie = `token=${token}; path=/; samesite=strict; secure`;
+
+          console.log(token);
+          // Show toast message for successful login
+          toast.success("Login successful!");
+
+          // Additional logic, e.g., redirect to another page
+        } else {
+          // Handle other response statuses if needed
+          toast.error("Error logging in. Please try again.");
+        }
+      })
+      .catch((error) => {
+        // Show toast message for error during login
+        if (error.response && error.response.status === 401) {
+          toast.error("Invalid username or password.");
+        } else {
+          toast.error("Error logging in. Please try again.");
+        }
+      });
+  };
 
   return (
     <div
@@ -143,6 +192,7 @@ function LoginPage() {
           >
             {translations[selectedLanguage].loginArea}
           </h1>
+          <ToastContainer />
           <div
             style={{
               display: "flex",
@@ -252,6 +302,7 @@ function LoginPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="username"
                 type="text"
                 required
                 style={{
@@ -271,6 +322,7 @@ function LoginPage() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
+                id="password"
                 type="password"
                 required
                 style={{
@@ -293,7 +345,7 @@ function LoginPage() {
                 cursor: "pointer",
               }}
             >
-              <input required type="checkbox" />{" "}
+              <input id="tosCheckbox" required type="checkbox" />{" "}
               {translations[selectedLanguage].TOS}
               <span onClick={handleTosClick} style={{ color: "#2C75C8" }}>
                 <strong>TOS</strong>
@@ -301,6 +353,7 @@ function LoginPage() {
             </label>
 
             <button
+              onClick={handleLogin}
               style={{
                 display: "flex",
                 alignItems: "center",
