@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './StresserSt.css';
 
 import StresserStHeader from './StresserStHeader';

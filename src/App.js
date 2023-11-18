@@ -1,4 +1,6 @@
 import React from "react";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 // import {
 //   Route,
 //   BrowserRouter as Router,
@@ -8,7 +10,8 @@ import React from "react";
 // import LoginPage from "./pages/LoginPage/LoginPage";
 // import { useCookies } from "react-cookie";
 // import Dashboard from "./pages/Dashboard/Dashboard";
- import StresserSt from "./pages/StresserSt/StresserST" 
+//  import StresserSt from "./pages/StresserSt/StresserST" 
+ import StresserZone from "./pages/StresserZone/StresserZone";
  function App() {
 //   const [cookies] = useCookies(["token"]);
 //   // Check if the "token" cookie exists
@@ -27,7 +30,8 @@ import React from "react";
     //     <Route path="/dashboard" element={<Dashboard />} />
     //   </Routes>
     // </Router>
-    <StresserSt />
+    // <StresserSt />
+    <StresserZone />
 
   );
 }
