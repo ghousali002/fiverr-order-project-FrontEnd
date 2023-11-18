@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import './StresserSt.css';
+import React from "react";
+import "./StresserSt.css";
 
-import StresserStHeader from './StresserStHeader';
-import StresserStPannel from './StresserStPannel';
+import StresserStHeader from "./StresserStHeader";
+import StresserStPannel from "./StresserStPannel";
 
-import Footer from './StresserStFooter';
-
+import Footer from "./StresserStFooter";
+import Navbar from "../../Navbar/Navbar";
 
 const StresserST = () => {
-  
   return (
- <>
-    <div class="container-fluid">
-        <div class="row">
-            <StresserStHeader />
-            <StresserStPannel />
+    <>
+      <Navbar />
+      <div class="container-fluid">
+        <div class="row ">
+          <StresserStHeader />
+          <StresserStPannel />
         </div>
-    </div>
-    <Footer />
- </>
+      </div>
+      <Footer />
+    </>
   );
 };
 

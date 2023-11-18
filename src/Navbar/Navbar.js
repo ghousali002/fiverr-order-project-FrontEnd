@@ -1,8 +1,20 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("");
+  const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+
+  const logoutHandler = () => {
+    // Delete the "token" cookie by setting an expired date
+    removeCookie("token", { path: "/", expires: new Date(0) });
+
+    // Redirect user to the '/' path using useNavigate
+    navigate("/");
+  };
 
   return (
     <nav
@@ -16,8 +28,8 @@ const Navbar = () => {
         zIndex: 1000,
         display: "flex",
         alignItems: "center",
-        fontFamily: "Poppins, sans-serif", // Apply Poppins font family
-        justifyContent: "flex-start		",
+        fontFamily: "Poppins, sans-serif",
+        justifyContent: "flex-start",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
       }}
     >
@@ -39,14 +51,14 @@ const Navbar = () => {
       </div>
       <div>
         <NavLink
-          to="/dashboard"
+          to="/StresserST"
           style={linkStyle(activeTab === "dashboard")}
           activeClassName="active"
           exact
           onMouseOver={() => setActiveTab("dashboard")}
           onMouseOut={() => setActiveTab("")}
         >
-          Dashboard
+          StresserST
         </NavLink>
         <NavLink
           to="/tab2"
@@ -69,30 +81,30 @@ const Navbar = () => {
           Tab 3
         </NavLink>
         <NavLink
-          to="/tab4"
+          to="/"
           style={linkStyle(activeTab === "tab4")}
           activeClassName="active"
           exact
           onMouseOver={() => setActiveTab("tab4")}
           onMouseOut={() => setActiveTab("")}
+          onClick={logoutHandler}
         >
-          Tab 4
+          Log Out
         </NavLink>
       </div>
 
       <style>
         {`
           .nav-link:hover {
-            color: #fff; /* change text color on hover */
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.8)",
-
+            color: #fff;
+            boxShadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
           }
 
           .nav-link.active {
-            background-color: #1b3659; /* active tab background color */
-            color: #fff; /* active tab text color */
-            border: 1px solid #000; /* square border with black color */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8); /* black shadow all around */
+            background-color: #1b3659;
+            color: #fff;
+            border: 1px solid #000;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
           }
         `}
       </style>
@@ -101,6 +113,7 @@ const Navbar = () => {
 };
 
 const linkStyle = (isActive) => ({
+  borderRadius: "1em",
   backgroundColor: "#1B3659",
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
   fontWeight: "bold",
