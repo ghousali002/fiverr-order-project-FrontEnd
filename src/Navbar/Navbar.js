@@ -20,10 +20,10 @@ const Navbar = () => {
   const location = useLocation();
 
   const tabNames = {
-    "/StresserST": "ST",
+    "/StresserSU": "SU",
     "/StresserZone": "Zone",
     "/StressThem": "Them",
-    "/StresserSU": "SU",
+    "/StresserST": "ST",
   };
 
   const getActiveTab = () => {
@@ -65,16 +65,18 @@ const Navbar = () => {
         </NavLink>
       </div>
       <div>
-        <NavLink
-          to="/StresserST"
-          style={linkStyle(activeTab === "dashboard")}
+      <NavLink
+          to="/StresserSU"
+          style={linkStyle(activeTab === "tab4")}
           activeClassName="active"
           exact
-          onMouseOver={() => setActiveTab("dashboard")}
+          onMouseOver={() => setActiveTab("tab4")}
           onMouseOut={() => setActiveTab("")}
+          
         >
-          StresserST
+          StresserSU
         </NavLink>
+
         <NavLink
           to="/StresserZone"
           style={linkStyle(activeTab === "StresserZone")}
@@ -95,17 +97,15 @@ const Navbar = () => {
         >
           Stress Them
         </NavLink>
-
         <NavLink
-          to="/StresserSU"
-          style={linkStyle(activeTab === "tab4")}
+          to="/StresserST"
+          style={linkStyle(activeTab === "dashboard")}
           activeClassName="active"
           exact
-          onMouseOver={() => setActiveTab("tab4")}
+          onMouseOver={() => setActiveTab("dashboard")}
           onMouseOut={() => setActiveTab("")}
-          
         >
-          StresserSU
+          StresserST
         </NavLink>
         <NavLink
           to="/"

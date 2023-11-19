@@ -30,9 +30,9 @@ function App() {
         <Route path="/Login" element={<LoginPage />} />
 
         <Route path="/StresserSU" element={<StresserSU />} />
-        <Route path="/StresserST" element={<StresserST />} />
         <Route path="/StresserZone" element={<StresserZone />} />
         <Route path="/StressThem" element={<StressThem />} />
+        <Route path="/StresserST" element={<StresserST />} />
         
 
       </Routes>

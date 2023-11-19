@@ -11,6 +11,70 @@ function RegistrationPage() {
   const [showTosModal, setShowTosModal] = useState(false);
   const [userCreated, setUserCreated] = useState(false);
 
+  const [captchaImg, setCaptchaImg] = useState('');
+
+  
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
+  
+
+  const fetchCaptcha = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/Register/generateCaptcha", {
+        headers: {
+          'x-request-id': 'unique-request-id', 
+        },
+      });
+      const capCode = response.data.captcha; 
+      console.log("CAPTCHA code from backend:", capCode);
+      generateCaptchaToPic(capCode); 
+    } catch (error) {
+      console.error("Error fetching CAPTCHA:", error);
+    }
+  };
+
+  const generateCaptchaToPic = (code) => {
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 50;
+    canvas.height = 40;
+  
+    const backgroundRed = Math.floor(Math.random() * 156) + 100; 
+    const backgroundGreen = Math.floor(Math.random() * 156) + 100;
+    const backgroundBlue = Math.floor(Math.random() * 156) + 100;
+    const backgroundColor = `rgb(${backgroundRed},${backgroundGreen},${backgroundBlue})`;
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+    const foregroundRed = Math.floor(Math.random() * 100);
+    const foregroundGreen = Math.floor(Math.random() * 100);
+    const foregroundBlue = Math.floor(Math.random() * 100);
+    const foregroundColor = `rgb(${foregroundRed},${foregroundGreen},${foregroundBlue})`;
+    ctx.fillStyle = foregroundColor;
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.textDecoration = 'underline';
+  
+    ctx.strokeStyle = foregroundColor;
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height / 2);
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+  
+    const rotationDirection = Math.random() < 0.5 ? -1 : 1;
+    const rotationAngle = rotationDirection * (Math.random() * 30);
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((rotationAngle * Math.PI) / 180);
+    ctx.fillText(code, 0, 0);
+  
+    setCaptchaImg(canvas.toDataURL());
+  
+    return canvas.toDataURL();
+  };
+
   const translations = {
     English: {
       register: "Register",
@@ -140,6 +204,7 @@ function RegistrationPage() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+    const captchaCode = document.getElementById("Ccode").value;
     const tosCheckbox = document.getElementById("tosCheckbox");
 
     // Validate username and password
@@ -166,14 +231,13 @@ function RegistrationPage() {
       toast.error("Please agree to the Terms of Service.");
       return;
     }
-    console.log(username, email, password, confirmPassword);
-
     // Make API request to create user
     axios
       .post("http://localhost:8080/Register/createUser", {
         username,
         email,
         password,
+        captchaCode,
       })
       .then((response) => {
         if (response.status === 201) {
@@ -191,11 +255,18 @@ function RegistrationPage() {
         // Show toast message for error during user creation
         if (error.response && error.response.status === 400) {
           toast.error("Username or email already exists.");
-        } else {
+        }
+        else if(error.response && error.response.status === 401){
+          fetchCaptcha();
+          toast.error("Captcha Invalid!!");
+        } 
+        else {
           toast.error("Error creating user. Please try again.");
         }
       });
   };
+
+
   useEffect(() => {
     if (userCreated) {
       // Wait for 2 seconds
@@ -449,10 +520,12 @@ function RegistrationPage() {
                 {" "}
                 {translations[selectedLanguage].captchaCode}
               </label>
+              <img src={captchaImg}  width="200" height="40" alt='captchaPic' style={{ marginLeft:15,borderRadius:6}} onClick={fetchCaptcha} />
             </div>
             <div style={{ padding: "1em 0em" }}>
               <input
                 type="text"
+                id="Ccode"
                 required
                 style={{
                   width: "100%",
