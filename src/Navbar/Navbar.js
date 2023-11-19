@@ -35,7 +35,7 @@ const Navbar = () => {
     >
       <div>
         <NavLink
-          to="/"
+          to=""
           style={{
             textDecoration: "none",
             color: "#ffffff",
@@ -68,17 +68,17 @@ const Navbar = () => {
           onMouseOver={() => setActiveTab("StresserZone")}
           onMouseOut={() => setActiveTab("")}
         >
-          Tab 2
+          Stresser Zone
         </NavLink>
         <NavLink
-          to="/tab3"
+          to="/StressThem"
           style={linkStyle(activeTab === "tab3")}
           activeClassName="active"
           exact
           onMouseOver={() => setActiveTab("tab3")}
           onMouseOut={() => setActiveTab("")}
         >
-          Tab 3
+          Stress Them
         </NavLink>
         <NavLink
           to="/"

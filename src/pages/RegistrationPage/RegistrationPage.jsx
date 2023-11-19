@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios"; // Import Axios
 import TosModal from "../LoginPage/TosModal";
 import LoginPage from "../LoginPage/LoginPage";
+import { useNavigate } from "react-router-dom";
 function RegistrationPage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("English");
@@ -111,8 +112,9 @@ function RegistrationPage() {
     },
   };
 
+  const navigate = useNavigate();
   const handleRegisterClick = () => {
-    setShowRegisterForm(true);
+    navigate("/Login");
   };
 
   //   const handleBackToLoginClick = () => {
@@ -215,7 +217,8 @@ function RegistrationPage() {
     <div
       style={{
         backgroundColor: "#061325",
-        height: "100vh",
+        height: "200vh",
+        marginTop: "-9em",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -229,7 +232,6 @@ function RegistrationPage() {
         <div
           style={{
             background: "#0E1C2F",
-            padding: "0em",
             borderRadius: "0.5em",
             textAlign: "left",
             width: "60em",

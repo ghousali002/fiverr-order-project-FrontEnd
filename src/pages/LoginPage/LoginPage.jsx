@@ -4,6 +4,7 @@ import RegistrationPage from "../RegistrationPage/RegistrationPage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios"; // Import Axios
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
@@ -76,8 +77,10 @@ function LoginPage() {
     },
   };
 
+  const navigate = useNavigate();
   const handleRegisterClick = () => {
-    setShowRegisterForm(true);
+    // setShowRegisterForm(true);
+    navigate("/Register");
   };
 
   //   const handleBackToLoginClick = () => {
@@ -126,6 +129,7 @@ function LoginPage() {
           console.log(token);
           // Show toast message for successful login
           toast.success("Login successful!");
+          navigate("/StresserST");
 
           // Additional logic, e.g., redirect to another page
         } else {
