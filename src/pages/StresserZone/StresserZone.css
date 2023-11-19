@@ -19,10 +19,7 @@
     background-color: #272b33;
     box-shadow: 0 0 0.5rem rgba(0,0,0,.1);
 }
-div.dark-theme {
-    background-color: #20123c;
-    color: #5e606e;
-}
+
 .range {
     width: 100%;
     height: calc(1rem + 0.4rem);

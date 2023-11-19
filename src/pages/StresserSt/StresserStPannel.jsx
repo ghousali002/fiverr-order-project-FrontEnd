@@ -9,8 +9,8 @@ const StresserPanel = () => {
   const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [ErrorMsg,setErrorMsg]=useState('Error');
   const [attacks, setAttacks] = useState([]);
+  
   const originalCaptchaRef = useRef('');
-
   const [captchaImg, setCaptchaImg] = useState('');
 
   useEffect(() => {

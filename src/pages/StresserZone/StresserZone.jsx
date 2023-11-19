@@ -5,7 +5,6 @@ import Navbar from "../../Navbar/Navbar";
 function StresserZone() {
   const [showAdvancedParameters, setShowAdvancedParameters] = useState(false);
 
-  const [scheduleAttack, setScheduleAttack] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [PresetModal, setPresetModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -231,6 +230,7 @@ function StresserZone() {
                                     name="presetKey"
                                     placeholder="Key"
                                     required=""
+                                    value={presetKey}
                                     onChange={handlePresetKeyChange}
                                   />
                                 </div>
@@ -241,6 +241,7 @@ function StresserZone() {
                                       width: 300,
                                       marginLeft: 2,
                                     }}
+                                    onClick={closeShowModal}
                                     type="button"
                                     className="btn btn-primary btn-block"
                                   >

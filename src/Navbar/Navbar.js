@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink , useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
@@ -16,6 +16,21 @@ const Navbar = () => {
     navigate("/");
   };
 
+  
+  const location = useLocation();
+
+  const tabNames = {
+    "/StresserST": "ST",
+    "/StresserZone": "Zone",
+    "/StressThem": "Them",
+    "/StresserSU": "SU",
+  };
+
+  const getActiveTab = () => {
+    return tabNames[location.pathname] || "";
+  };
+
+  
   return (
     <nav
       style={{
@@ -46,7 +61,7 @@ const Navbar = () => {
           activeClassName="active"
           exact
         >
-          Stresser.su
+          Stresser.{getActiveTab() || 'su'}
         </NavLink>
       </div>
       <div>
@@ -80,12 +95,24 @@ const Navbar = () => {
         >
           Stress Them
         </NavLink>
+
         <NavLink
-          to="/"
+          to="/StresserSU"
           style={linkStyle(activeTab === "tab4")}
           activeClassName="active"
           exact
           onMouseOver={() => setActiveTab("tab4")}
+          onMouseOut={() => setActiveTab("")}
+          
+        >
+          StresserSU
+        </NavLink>
+        <NavLink
+          to="/"
+          style={linkStyle(activeTab === "tab5")}
+          activeClassName="active"
+          exact
+          onMouseOver={() => setActiveTab("tab5")}
           onMouseOut={() => setActiveTab("")}
           onClick={logoutHandler}
         >
