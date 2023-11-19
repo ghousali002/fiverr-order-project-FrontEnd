@@ -1,7 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../../Navbar/Navbar";
 
 function StressThem() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const buttonStyle = {
+    background: isHovered ? "#16F442" : "#fff",
+    padding: "0.5em 9em",
+    transition: "background-color 0.3s ease", // Optional: Add a smooth transition effect
+  };
+  const [targetInfo, setTargetInfo] = useState({
+    host: "",
+    port: "",
+    seconds: "",
+  });
+
+  const handleInputChange = (field, value) => {
+    setTargetInfo({
+      ...targetInfo,
+      [field]: value,
+    });
+  };
+
+  const handleStartAttack = () => {
+    const { host, port, seconds } = targetInfo;
+
+    if (!host || !port || !seconds) {
+      alert("Missing information. Please fill in all fields.");
+    } else {
+      // All information is provided, you can show a modal or perform other actions
+      console.log("Start Attack with:", targetInfo);
+      setIsModalOpen(true);
+    }
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const modalStyle = {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "2em",
+    background: "#242A32",
+    zIndex: 1000,
+    color: "#fff",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    border: "2px solid grey",
+    borderRadius: "1em",
+  };
   return (
     <>
       <Navbar />
@@ -105,12 +154,326 @@ function StressThem() {
         <div style={formContainerStyle}>
           <div style={formPartitionStyle}>
             <div>
-              <p style={{ color: "#fff" }}>Step 1: Select attack method</p>
+              <p style={{ color: "#fff" }}>
+                <strong>Step 1:</strong> Select attack method
+              </p>
+            </div>
+            <div>
+              <button style={{ background: "#fff", padding: "0.5em 10em" }}>
+                Layer 4
+              </button>
+            </div>
+            <div style={{ padding: "1em 0em" }}>
+              <select
+                style={{
+                  background: "#1A2026",
+                  color: "white",
+                  fontFamily:
+                    'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                  padding: "0.3em 5em",
+                  borderRadius: "3px",
+                  fontSize: "1em",
+                  border: "1px solid #344050",
+                }}
+              >
+                <option value="Select Method">Select Method</option>
+
+                <option value="DNS">DNS</option>
+                <option value="NTP">NTP</option>
+                <option value="UCP-MIX">UCP-MIX</option>
+                <option value="SSDP">SSDP</option>
+              </select>
+            </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <svg
+                  width="180px"
+                  height="180px"
+                  viewBox="0 0 48.00 48.00"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#667380"
+                  stroke="#667380"
+                  strokeWidth="3.12"
+                  style={{ width: "1.5em" }}
+                >
+                  <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <defs>
+                      <style>{`.a{fill:none;stroke:#667380;stroke-linecap:round;stroke-linejoin:round;}`}</style>
+                    </defs>
+                    <path
+                      className="a"
+                      d="M24.0211,32.9211a4.2163,4.2163,0,1,0,4.2162,4.2164v0h0A4.2163,4.2163,0,0,0,24.0211,32.9211Z"
+                    ></path>
+                    <line
+                      className="a"
+                      x1="25.2921"
+                      y1="33.1168"
+                      x2="33.3312"
+                      y2="8.1025"
+                    ></line>
+                    <path
+                      className="a"
+                      d="M30.7652,28.6157c-.0913-.0763-.1881-.1418-.2813-.2145"
+                    ></path>
+                    <path
+                      className="a"
+                      d="M23.845,26.18a10.486,10.486,0,0,0-6.515,2.3989v.0364"
+                    ></path>
+                    <path
+                      className="a"
+                      d="M37.1783,21.3261a20.6539,20.6539,0,0,0-3.6515-2.3934"
+                    ></path>
+                    <path
+                      className="a"
+                      d="M26.8559,16.8115a20.6419,20.6419,0,0,0-15.9921,4.5146"
+                    ></path>
+                    <path
+                      className="a"
+                      d="M43.5,13.6741a30.5523,30.5523,0,0,0-6.8981-4.31"
+                    ></path>
+                    <path
+                      className="a"
+                      d="M29.9291,7.2488A30.5319,30.5319,0,0,0,4.5,13.6741"
+                    ></path>
+                  </g>
+                </svg>
+                <p style={{ color: "#667380", margin: "1em 0em" }}>
+                  Premium methods
+                </p>
+              </div>
+              <div style={{ display: "flex" }}>
+                <svg
+                  fill="#667380"
+                  viewBox="0 0 32 32"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="#667380"
+                  style={{ width: "1.5em" }}
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    {" "}
+                    <path d="M18.605 2.022v0zM18.605 2.022l-2.256 11.856 8.174 0.027-11.127 16.072 2.257-13.043-8.174-0.029zM18.606 0.023c-0.054 0-0.108 0.002-0.161 0.006-0.353 0.028-0.587 0.147-0.864 0.333-0.154 0.102-0.295 0.228-0.419 0.373-0.037 0.043-0.071 0.088-0.103 0.134l-11.207 14.832c-0.442 0.607-0.508 1.407-0.168 2.076s1.026 1.093 1.779 1.099l5.773 0.042-1.815 10.694c-0.172 0.919 0.318 1.835 1.18 2.204 0.257 0.11 0.527 0.163 0.793 0.163 0.629 0 1.145-0.294 1.533-0.825l11.22-16.072c0.442-0.607 0.507-1.408 0.168-2.076-0.34-0.669-1.026-1.093-1.779-1.098l-5.773-0.010 1.796-9.402c0.038-0.151 0.057-0.308 0.057-0.47 0-1.082-0.861-1.964-1.939-1.999-0.024-0.001-0.047-0.001-0.071-0.001v0z"></path>{" "}
+                  </g>
+                </svg>
+
+                <p style={{ color: "#667380", margin: "1em 0em" }}>
+                  Concurrents
+                </p>
+              </div>
             </div>
           </div>
-          <div style={formPartitionStyle}>Form Partition 2</div>
+          <div style={formPartitionStyle}>
+            <div>
+              <p style={{ color: "#fff" }}>
+                <strong>Step 2:</strong> Target Informations
+              </p>
+            </div>
+            <div>
+              <input
+                value={targetInfo.host}
+                onChange={(e) => handleInputChange("host", e.target.value)}
+                placeholder="Enter Target Host (IP)"
+                style={{
+                  background: "#1A2026",
+                  color: "white",
+                  fontFamily:
+                    'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                  padding: "0.3em 5em",
+                  borderRadius: "3px",
+                  fontSize: "1em",
+                  border: "1px solid #1A2026",
+                }}
+              />
+            </div>
+            <div>
+              <div>
+                <input
+                  placeholder="Port"
+                  value={targetInfo.port}
+                  onChange={(e) => handleInputChange("port", e.target.value)}
+                  style={{
+                    background: "#1A2026",
+                    color: "white",
+                    fontFamily:
+                      'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                    padding: "0.3em 1em",
+                    borderRadius: "3px",
+                    fontSize: "1em",
+                    border: "1px solid #344050",
+                    margin: "1em 0em",
+                    marginRight: "1em",
+                  }}
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  min="1"
+                  max="5"
+                />
+                <input
+                  placeholder="Seconds"
+                  value={targetInfo.seconds}
+                  onChange={(e) => handleInputChange("seconds", e.target.value)}
+                  style={{
+                    background: "#1A2026",
+                    color: "white",
+                    fontFamily:
+                      'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                    padding: "0.3em 1em",
+                    borderRadius: "3px",
+                    fontSize: "1em",
+                    border: "1px solid #344050",
+                    margin: "1em 0em",
+                  }}
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  min="1"
+                  max="300"
+                />
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#4D5763"
+                  stroke="#4D5763"
+                  style={{ width: "1em" }}
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    {" "}
+                    <title></title>{" "}
+                    <g id="Complete">
+                      {" "}
+                      <g id="stopwatch">
+                        {" "}
+                        <g>
+                          {" "}
+                          <line
+                            fill="none"
+                            stroke="#4D5763"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            x1="12"
+                            x2="12"
+                            y1="10.8"
+                            y2="14"
+                          ></line>{" "}
+                          <circle
+                            cx="12"
+                            cy="14.5"
+                            data-name="Circle"
+                            fill="none"
+                            id="Circle-2"
+                            r="7.9"
+                            stroke="#4D5763"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                          ></circle>{" "}
+                          <polyline
+                            fill="none"
+                            points="12 5.5 12 1.5 9 1.5 15 1.5"
+                            stroke="#4D5763"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                          ></polyline>{" "}
+                        </g>{" "}
+                      </g>{" "}
+                    </g>{" "}
+                  </g>
+                </svg>
+                <p style={{ color: "#4D5763", margin: "1em 0em" }}>
+                  Max. boot time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style={{ color: "#fff" }}>5 min</span>
+                </p>{" "}
+              </div>
+              <div>
+                <button
+                  onClick={handleStartAttack}
+                  style={buttonStyle}
+                  onMouseOver={() => setIsHovered(true)}
+                  onMouseOut={() => setIsHovered(false)}
+                >
+                  Start Attack
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      {isModalOpen && (
+        <>
+          <div style={modalStyle}>
+            <div style={{ justifyContent: "center", textAlign: "center" }}>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ width: "1em" }}
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  {" "}
+                  <path
+                    d="M7.29417 12.9577L10.5048 16.1681L17.6729 9"
+                    stroke="#07D83D"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>{" "}
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="#07D83D"
+                    stroke-width="2"
+                  ></circle>{" "}
+                </g>
+              </svg>
+              <p style={{ fontSize: "2em" }}>Your action was successfull</p>
+            </div>
+
+            <div style={{ justifyContent: "center", textAlign: "center" }}>
+              <button
+                style={{
+                  background: "transparent",
+                  padding: "0.2em 2em",
+                  borderRadius: "0.2em",
+                  color: "#fff",
+                }}
+                onClick={closeModal}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -122,7 +485,7 @@ const containerStyle = {
   marginTop: "10em",
   background: "#242A32",
   padding: "2em 0em",
-  margin: "10em",
+  margin: "6em 10em",
 };
 
 const headerStyle = {
@@ -136,20 +499,18 @@ const headerStyle = {
 
 const partitionStyle = {
   flex: 1,
-  padding: "2em",
+  padding: "0.5em 5em",
 };
 
 const formContainerStyle = {
   display: "flex",
-  justifyContent: "space-between",
-  width: "80%", // Adjust as needed
+  width: "80%",
 };
 
 const formPartitionStyle = {
   flex: 1,
-  border: "1px solid #ccc",
   padding: "20px",
-  marginRight: "10px", // Adjust as needed
+  marginRight: "10px",
 };
 
 export default StressThem;
