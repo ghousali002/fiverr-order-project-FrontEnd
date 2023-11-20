@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../Navbar/Navbar";
 
 function StressThem() {
@@ -6,6 +6,8 @@ function StressThem() {
   const [isHovered2, setIsHovered2] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAutoAttack, setIsAutoAttack] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
 
   const [targetInfo, setTargetInfo] = useState({
     host: "",
@@ -14,20 +16,46 @@ function StressThem() {
     method: "Select Method", // Default value for the method dropdown
   });
 
-  const attackMethods = ["DNS", "NTP", "UCP-MIX", "SSDP"];
-  const maxBootTimes = [1, 2, 3, 4, 5];
+  useEffect(() => {
+    let attackIntervalId;
 
-  const getRandomValue = (array) => {
-    const randomIndex = Math.floor(Math.random() * array.length);
-    return array[randomIndex];
+    const startAutoAttack = () => {
+      // Logic to start the attack goes here
+      console.log("Automatic Attack Started");
+
+      const { host, port, seconds } = targetInfo;
+
+      if (!host || !port || !seconds) {
+        alert("Missing information. Please fill in all fields.");
+      } else {
+        // All information is provided, you can show a modal or perform other actions
+        console.log("Start Attack with:", targetInfo);
+      }
+    };
+
+    const startAttackInterval = () => {
+      attackIntervalId = setInterval(() => {
+        startAutoAttack();
+      }, 10 * 60 * 1000); // 10 minutes in milliseconds
+    };
+
+    // Check if automatic attack is enabled
+    if (isAutoAttack) {
+      startAttackInterval();
+    }
+
+    // Clean up the interval when the component is unmounted or isAutoAttack is false
+    return () => {
+      if (attackIntervalId) {
+        clearInterval(attackIntervalId);
+      }
+    };
+  }, [isAutoAttack, targetInfo]);
+
+  const handleStopAttack = () => {
+    // Stop the automatic attack
+    setIsAutoAttack(false);
   };
-
-  const getRandomIPAddress = () => {
-    const getRandomOctet = () => Math.floor(Math.random() * 256);
-    return `${getRandomOctet()}.${getRandomOctet()}.${getRandomOctet()}.${getRandomOctet()}`;
-  };
-
-  const getRandomSingleDigit = () => Math.floor(Math.random() * 300) + 1;
 
   // const handleRandomData = () => {
   //   setTargetInfo({
@@ -77,8 +105,14 @@ function StressThem() {
       [field]: value,
     });
   };
-
   const handleStartAttack = () => {
+    // Check if automatic attack is already in progress
+    if (isAutoAttack) {
+      // If true, stop the automatic attack and return
+      setIsAutoAttack(false);
+      return;
+    }
+
     const { host, port, seconds } = targetInfo;
 
     if (!host || !port || !seconds) {
@@ -87,8 +121,10 @@ function StressThem() {
       // All information is provided, you can show a modal or perform other actions
       console.log("Start Attack with:", targetInfo);
       setIsModalOpen(true);
+      setIsAutoAttack(true);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -475,14 +511,32 @@ function StressThem() {
                 </p>{" "}
               </div>
               <div>
-                <button
-                  onClick={handleStartAttack}
-                  style={buttonStyle}
-                  onMouseOver={() => setIsHovered(true)}
-                  onMouseOut={() => setIsHovered(false)}
-                >
-                  Start Attack
-                </button>
+                <>
+                  {isAutoAttack ? (
+                    <button
+                      onClick={handleStopAttack}
+                      style={buttonStyle}
+                      onMouseOver={() => setIsHovered(true)}
+                      onMouseOut={() => setIsHovered(false)}
+                    >
+                      Stop Attack
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleStartAttack}
+                      style={buttonStyle}
+                      onMouseOver={() => setIsHovered(true)}
+                      onMouseOut={() => setIsHovered(false)}
+                    >
+                      Start Attack
+                    </button>
+                  )}
+                </>
+                {isAutoAttack && (
+                  <p style={{ color: "red" }}>
+                    Attack will be started automatically after every 10 minutes
+                  </p>
+                )}
               </div>
             </div>
           </div>
