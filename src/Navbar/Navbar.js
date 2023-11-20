@@ -36,7 +36,7 @@ const Navbar = () => {
       style={{
         backgroundColor: "#132238",
         color: "#ffffff",
-        padding: "17px",
+        padding: "15px",
         position: "fixed",
         width: "100%",
         top: 0,
@@ -133,6 +133,7 @@ const Navbar = () => {
             border: 1px solid #000;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
           }
+          
         `}
       </style>
     </nav>
@@ -144,7 +145,7 @@ const linkStyle = (isActive) => ({
   backgroundColor: "#1B3659",
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
   fontWeight: "bold",
-  padding: "0.7em 3em",
+  padding: "0.7em 2em",
   textDecoration: "none",
   color: isActive ? "#fff" : "#767F8B",
   margin: "0 15px",
