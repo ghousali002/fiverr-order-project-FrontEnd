@@ -3,18 +3,53 @@ import Navbar from "../../Navbar/Navbar";
 
 function StressThem() {
   const [isHovered, setIsHovered] = useState(false);
+  const [isHovered2, setIsHovered2] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const buttonStyle = {
-    background: isHovered ? "#16F442" : "#fff",
-    padding: "0.5em 9em",
-    transition: "background-color 0.3s ease", // Optional: Add a smooth transition effect
-  };
   const [targetInfo, setTargetInfo] = useState({
     host: "",
     port: "",
     seconds: "",
+    method: "Select Method", // Default value for the method dropdown
   });
+
+  const attackMethods = ["DNS", "NTP", "UCP-MIX", "SSDP"];
+  const maxBootTimes = [1, 2, 3, 4, 5];
+
+  const getRandomValue = (array) => {
+    const randomIndex = Math.floor(Math.random() * array.length);
+    return array[randomIndex];
+  };
+
+  const getRandomIPAddress = () => {
+    const getRandomOctet = () => Math.floor(Math.random() * 256);
+    return `${getRandomOctet()}.${getRandomOctet()}.${getRandomOctet()}.${getRandomOctet()}`;
+  };
+
+  const getRandomSingleDigit = () => Math.floor(Math.random() * 300) + 1;
+
+  const handleRandomData = () => {
+    setTargetInfo({
+      host: getRandomIPAddress(),
+      port: getRandomSingleDigit().toString(),
+      seconds: getRandomValue(["60", "120", "180"]),
+      method: getRandomValue(["DNS", "NTP", "UCP-MIX", "SSDP"]),
+    });
+  };
+
+  const buttonStyle = {
+    background: isHovered ? "#16F442" : "#fff",
+
+    padding: "0.5em 9em",
+    transition: "background-color 0.3s ease", // Optional: Add a smooth transition effect
+  };
+  const buttonStyle2 = {
+    background: isHovered2 ? "#16F442" : "#fff",
+
+    padding: "0.5em 9em",
+    transition: "background-color 0.3s ease", // Optional: Add a smooth transition effect
+  };
 
   const handleInputChange = (field, value) => {
     setTargetInfo({
@@ -165,6 +200,8 @@ function StressThem() {
             </div>
             <div style={{ padding: "1em 0em" }}>
               <select
+                value={targetInfo.method}
+                onChange={(e) => handleInputChange("method", e.target.value)}
                 style={{
                   background: "#1A2026",
                   color: "white",
@@ -177,12 +214,22 @@ function StressThem() {
                 }}
               >
                 <option value="Select Method">Select Method</option>
-
                 <option value="DNS">DNS</option>
                 <option value="NTP">NTP</option>
                 <option value="UCP-MIX">UCP-MIX</option>
                 <option value="SSDP">SSDP</option>
               </select>
+            </div>
+
+            <div>
+              <button
+                onClick={handleRandomData}
+                style={buttonStyle2}
+                onMouseOver={() => setIsHovered2(true)}
+                onMouseOut={() => setIsHovered2(false)}
+              >
+                Random
+              </button>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center" }}>
