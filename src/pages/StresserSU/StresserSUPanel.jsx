@@ -21,6 +21,49 @@ function StresserSUPanel() {
   const [attacks, setAttacks] = useState([]);
   const [onGoingEmpty, setOnGoingEmpty] = useState(true);
 
+  const ipAddressesArray = [
+    { ip: '192.168.0.1', port: '8080' },
+    { ip: '10.0.0.1', port: '3000' },
+    { ip: '172.16.0.1', port: '4000' },
+    { ip: '123.45.67.89', port: '5000' },
+    { ip: '98.76.54.32', port: '6000' },
+    { ip: '54.32.10.21', port: '7000' },
+    { ip: '88.99.11.22', port: '9000' },
+    { ip: '66.77.88.99', port: '10000' },
+    { ip: '11.22.33.44', port: '11000' },
+    { ip: '55.44.33.22', port: '12000' },
+    { ip: '98.76.54.32', port: '13000' },
+    { ip: '33.22.11.00', port: '14000' },
+    { ip: '77.88.99.11', port: '15000' },
+    { ip: '88.77.66.55', port: '16000' },
+    { ip: '11.22.33.44', port: '17000' },
+  ];
+  const URLsArray = [
+    'https://www.google.com',
+    'https://www.yahoo.com',
+    'https://www.github.com',
+    'https://www.microsoft.com',
+    'https://www.amazon.com',
+    'https://www.apple.com',
+    'https://www.spotify.com',
+    'https://www.netflix.com',
+    'https://www.linkedin.com',
+    'https://www.reddit.com',
+    'https://www.twitch.tv',
+    'https://www.instagram.com',
+    'https://www.twitter.com',
+    'https://www.facebook.com',
+    'https://www.youtube.com',
+  ];
+  const getRandomAddress = () => {
+    const randomIndex = Math.floor(Math.random() * ipAddressesArray.length);
+    const selectedAddress = ipAddressesArray[randomIndex];
+    
+    setTargetIP(selectedAddress.ip);
+    setPort(selectedAddress.port);
+    setTargetURL(URLsArray[randomIndex]);
+  };
+
   useEffect(() => {
     let timers = [];
     attacks.forEach((attack, index) => {
@@ -51,6 +94,7 @@ function StresserSUPanel() {
       setOnGoingEmpty(true);
     }
   };
+  
 
   const handleCaptchaValue = (e) => {
     setCaptchaCode(e.target.value);
@@ -415,6 +459,7 @@ function StresserSUPanel() {
                     <button
                       type="button"
                       className="btn rounded-capsule btn-primary mx-3"
+                      onClick={getRandomAddress}
                     >
                       <i class="fas fa-random">&nbsp;</i>
                       Random Data

@@ -19,6 +19,38 @@ function StresserZone() {
   const [ErrorMsg, setErrorMsg] = useState("Error");
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+
+  const ipAddressesArray = [
+    { ip: '192.168.0.1', port: '8080' },
+    { ip: '10.0.0.1', port: '3000' },
+    { ip: '172.16.0.1', port: '4000' },
+    { ip: '123.45.67.89', port: '5000' },
+    { ip: '98.76.54.32', port: '6000' },
+    { ip: '54.32.10.21', port: '7000' },
+    { ip: '88.99.11.22', port: '9000' },
+    { ip: '66.77.88.99', port: '10000' },
+    { ip: '11.22.33.44', port: '11000' },
+    { ip: '55.44.33.22', port: '12000' },
+    { ip: '98.76.54.32', port: '13000' },
+    { ip: '33.22.11.00', port: '14000' },
+    { ip: '77.88.99.11', port: '15000' },
+    { ip: '88.77.66.55', port: '16000' },
+    { ip: '11.22.33.44', port: '17000' },
+  ];
+
+  const getRandomAddress = () => {
+    const randomIndex = Math.floor(Math.random() * ipAddressesArray.length);
+    const selectedAddress = ipAddressesArray[randomIndex];
+    
+    setTargetIP(selectedAddress.ip);
+    setPort(selectedAddress.port);
+    // for set the time of randomlly
+     setTimeValue(getRandomIndex([30,20,40,50,80]));
+  };
+  const getRandomIndex = (array) => {
+    const randomIndex = Math.floor(Math.random() * array.length);
+    return array[randomIndex];
+  };
   useEffect(() => {
     let timers = [];
     attacksInProgress.forEach((attack, index) => {
@@ -551,6 +583,14 @@ function StresserZone() {
 
                   <button
                     style={{ marginTop: 15 }}
+                    type="button"
+                    className="btn btn-primary text-uppercase"
+                    onClick={getRandomAddress}
+                  >
+                    Get Random &nbsp;
+                  </button>
+                  <button
+                    style={{ marginLeft: 9 , marginTop: 15 }}
                     type="button"
                     className="btn btn-primary text-uppercase"
                     onClick={handleSendAttack}

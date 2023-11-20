@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios"; // Import Axios
 import { useNavigate } from "react-router-dom";
 
+
 function LoginPage() {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("English");
@@ -129,7 +130,7 @@ function LoginPage() {
           console.log(token);
           // Show toast message for successful login
           toast.success("Login successful!");
-          navigate("/StresserST");
+          navigate("/StresserSU",{replace:true});
 
           // Additional logic, e.g., redirect to another page
         } else {
