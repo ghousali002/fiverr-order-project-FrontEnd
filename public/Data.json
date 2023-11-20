@@ -1,0 +1,11 @@
+[
+  { "host": "192.168.0.1", "port": "80", "seconds": "60", "method": "DNS" },
+  { "host": "10.0.0.1", "port": "8080", "seconds": "120", "method": "NTP" },
+  {
+    "host": "172.16.0.1",
+    "port": "443",
+    "seconds": "180",
+    "method": "UCP-MIX"
+  },
+  { "host": "192.168.1.1", "port": "8000", "seconds": "90", "method": "SSDP" }
+]

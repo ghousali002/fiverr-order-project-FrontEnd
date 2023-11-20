@@ -29,13 +29,33 @@ function StressThem() {
 
   const getRandomSingleDigit = () => Math.floor(Math.random() * 300) + 1;
 
-  const handleRandomData = () => {
-    setTargetInfo({
-      host: getRandomIPAddress(),
-      port: getRandomSingleDigit().toString(),
-      seconds: getRandomValue(["60", "120", "180"]),
-      method: getRandomValue(["DNS", "NTP", "UCP-MIX", "SSDP"]),
-    });
+  // const handleRandomData = () => {
+  //   setTargetInfo({
+  //     host: getRandomIPAddress(),
+  //     port: getRandomSingleDigit().toString(),
+  //     seconds: getRandomValue(["60", "120", "180"]),
+  //     method: getRandomValue(["DNS", "NTP", "UCP-MIX", "SSDP"]),
+  //   });
+  // };
+  const handleRandomData = async () => {
+    try {
+      // Fetch the dummy data from the file
+      const response = await fetch("./Data.json");
+      const data = await response.json();
+      console.log(data);
+      // Get a random index from the dummy data array
+      const randomIndex = Math.floor(Math.random() * data.length);
+
+      // Set the state with the random values
+      setTargetInfo({
+        host: data[randomIndex].host,
+        port: data[randomIndex].port,
+        seconds: data[randomIndex].seconds,
+        method: data[randomIndex].method,
+      });
+    } catch (error) {
+      console.error("Error fetching or parsing dummy data:", error);
+    }
   };
 
   const buttonStyle = {
