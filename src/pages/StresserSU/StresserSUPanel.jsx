@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function StresserSUPanel() {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,6 +22,122 @@ function StresserSUPanel() {
 
   const [attacks, setAttacks] = useState([]);
   const [onGoingEmpty, setOnGoingEmpty] = useState(true);
+
+
+  const [isAutoAttack, setIsAutoAttack] = useState(false);
+  const [targetInfo, setTargetInfo] = useState({
+    attacks: [],
+    currentAttackIndex: 0,
+  });
+  const [dataFetched, setDataFetched] = useState(false);
+  useEffect(() => {
+    if (dataFetched && targetInfo.attacks.length > 0) {
+
+      let attackIntervalId;
+
+      const startAttackInterval = () => {
+        attackIntervalId = setInterval(() => {
+          if (targetInfo.currentAttackIndex < targetInfo.attacks.length) {
+            startAutoAttack(targetInfo.currentAttackIndex);
+            
+            console.log(targetInfo.attacks[targetInfo.currentAttackIndex]);
+            setTargetInfo((prevState) => ({
+              ...prevState,
+              currentAttackIndex: prevState.currentAttackIndex + 1,
+            }));
+            
+            
+          } else {
+            toast.success('All attacks on listed addresses have been completed.');
+            setShowErrorModal(true);
+            clearInterval(attackIntervalId);
+          }
+        }, 600000);
+      };
+
+      setIsAutoAttack(true);
+      startAttackInterval();
+
+      return () => {
+        if (attackIntervalId) {
+          clearInterval(attackIntervalId);
+        }
+      };
+    }
+  }, [dataFetched, targetInfo]);
+
+  const handleStopAttack = () => {
+    setIsAutoAttack(false);
+    setTargetInfo({
+      ...targetInfo,
+      attacks: [],
+      currentAttackIndex: 0,
+    });
+  };
+
+  function startAutoAttack(index) {
+    const { host, port, seconds } = targetInfo.attacks[index];
+    let captcha = originalCaptchaRef.current;
+    setTargetIP(host);
+    setPort(port);
+    setTime(seconds);
+    setCaptchaCode(captcha);
+    AutoSendAttack(host, port, seconds, captcha);
+  }
+
+  const handleAutoAttack = async () => {
+    try {
+      const response = await fetch("./Data.json");
+      const data = await response.json();
+      
+      setTargetInfo({
+        ...targetInfo,
+        attacks: [...targetInfo.attacks, ...data], 
+      });
+
+      toast.success('Attacks will occur one by one every 10 minutes.');
+  
+      setDataFetched(true);
+      console.log("handleAutoAttack", data);
+    } catch (error) {
+      setErrorMsg("File Missing or Error Fetching data");
+      setShowErrorModal(true);
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  function AutoSendAttack ( host ,port,time,captchaAnswer)  {
+    if (!host || !port || !time || !captchaAnswer) {
+      setErrorMsg('Please enter all fields before submitting...');
+      setShowErrorModal(true);
+      handleStopAttack();
+    } else {
+      if (!isValidIP(host) || !isValidPort(port)) {
+        setErrorMsg("Please Enter the Valid values (Ipv4 or Port) before submitting...");
+        setShowErrorModal(true);
+        handleStopAttack();
+      } else {
+        const currentCaptcha = originalCaptchaRef.current;
+        if (currentCaptcha === captchaAnswer) {
+        console.log('Captcha Verified');
+        const newAttack = {
+          host: host,
+          port: port,
+          time: time,
+        };
+        setAttacks([...attacks, newAttack]);
+        refreshCaptcha();
+      } else {
+        setErrorMsg("Bad captcha answer please try again..");
+        setShowErrorModal(true);
+        refreshCaptcha();
+      }
+      }
+    }
+  };
+
+
 
   const ipAddressesArray = [
     { ip: '192.168.0.1', port: '8080' },
@@ -358,6 +476,7 @@ function StresserSUPanel() {
 
   return (
     <>
+     <ToastContainer />
       {showErrorModal && (
         <div
           className="modal"
@@ -1071,6 +1190,20 @@ function StresserSUPanel() {
                     >
                       Start
                     </button>
+                  </td>
+                  
+                </tr>
+                <tr>
+                <td className="text-center" colSpan="3">
+                <button
+              id="AutoAttack"
+              className="btn btn-dark btn-sm"
+              onClick={isAutoAttack ? handleStopAttack : handleAutoAttack}
+              style={{marginLeft:10 ,marginTop:20}}
+            >
+              {isAutoAttack ? <span>Stop </span>  : <span>Start </span> }
+               Auto Attack 
+            </button>
                   </td>
                 </tr>
               </tbody>

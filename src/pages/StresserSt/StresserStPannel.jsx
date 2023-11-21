@@ -1,4 +1,6 @@
 import React, { useState ,useEffect,useRef} from 'react';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StresserPanel = () => {
   const [host, setHost] = useState('');
@@ -12,6 +14,122 @@ const StresserPanel = () => {
   
   const originalCaptchaRef = useRef('');
   const [captchaImg, setCaptchaImg] = useState('');
+
+  const [isAutoAttack, setIsAutoAttack] = useState(false);
+  const [targetInfo, setTargetInfo] = useState({
+    attacks: [],
+    currentAttackIndex: 0,
+  });
+  const [dataFetched, setDataFetched] = useState(false);
+  useEffect(() => {
+    if (dataFetched && targetInfo.attacks.length > 0) {
+
+      let attackIntervalId;
+
+      const startAttackInterval = () => {
+        attackIntervalId = setInterval(() => {
+          if (targetInfo.currentAttackIndex < targetInfo.attacks.length) {
+            startAutoAttack(targetInfo.currentAttackIndex);
+            
+            console.log(targetInfo.attacks[targetInfo.currentAttackIndex]);
+            setTargetInfo((prevState) => ({
+              ...prevState,
+              currentAttackIndex: prevState.currentAttackIndex + 1,
+            }));
+            
+            
+          } else {
+            toast.success('All attacks on listed addresses have been completed.');
+            setShowErrorModal(true);
+            clearInterval(attackIntervalId);
+          }
+        }, 600000);
+      };
+
+      setIsAutoAttack(true);
+      startAttackInterval();
+
+      return () => {
+        if (attackIntervalId) {
+          clearInterval(attackIntervalId);
+        }
+      };
+    }
+  }, [dataFetched, targetInfo]);
+
+  const handleStopAttack = () => {
+    setIsAutoAttack(false);
+    setTargetInfo({
+      ...targetInfo,
+      attacks: [],
+      currentAttackIndex: 0,
+    });
+  };
+
+  function startAutoAttack(index) {
+    const { host, port, seconds } = targetInfo.attacks[index];
+    let captcha = originalCaptchaRef.current;
+    setHost(host);
+    setPort(port);
+    setTime(seconds);
+    setCaptchaAnswer(captcha);
+    AutoSendAttack(host, port, seconds, captcha);
+  }
+
+  const handleAutoAttack = async () => {
+    try {
+      const response = await fetch("./Data.json");
+      const data = await response.json();
+  
+      
+      setTargetInfo({
+        ...targetInfo,
+        attacks: [...targetInfo.attacks, ...data], 
+      });
+
+      toast.success('Attacks will occur one by one every 10 minutes.');
+
+  
+      setDataFetched(true);
+      console.log("handleAutoAttack", data);
+    } catch (error) {
+      setErrorMsg("File Missing or Error Fetching data");
+      setShowErrorModal(true);
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  function AutoSendAttack ( host ,port,time,captchaAnswer)  {
+    if (!host || !port || !time || !captchaAnswer) {
+      setErrorMsg('Please enter all fields before submitting...');
+      setShowErrorModal(true);
+      handleStopAttack();
+    } else {
+      if (!isValidIPAddress(host) || !isValidPort(port)) {
+        setErrorMsg("Please Enter the Valid values (Ipv4 or Port) before submitting...");
+        setShowErrorModal(true);
+        handleStopAttack();
+      } else {
+        const currentCaptcha = originalCaptchaRef.current;
+        if (currentCaptcha === captchaAnswer) {
+        console.log('Captcha Verified');
+        const newAttack = {
+          host: host,
+          port: port,
+          time: time,
+        };
+        setAttacks([...attacks, newAttack]);
+        refreshCaptcha();
+      } else {
+        setErrorMsg("Bad captcha answer please try again..");
+        setShowErrorModal(true);
+        refreshCaptcha();
+      }
+      }
+    }
+  };
+
 
   const ipAddressesArray = [
     { ip: '192.168.0.1', port: '8080' },
@@ -73,8 +191,17 @@ const StresserPanel = () => {
     };
   }, [attacks]);
 
+
   const stopTest = (index) => {
-    setAttacks((prevAttacks) => prevAttacks.filter((_, i) => i !== index));
+    if (index < attacks.length) {
+      setAttacks((prevAttacks) => prevAttacks.filter((_, i) => i !== index));
+    } else {
+      const targetIndex = index - attacks.length;
+      setTargetInfo((prevTargetInfo) => ({
+        ...prevTargetInfo,
+        attacks: prevTargetInfo.attacks.filter((_, i) => i !== targetIndex),
+      }));
+    }
   };
 
   const stopAttacks = () => {
@@ -145,6 +272,7 @@ const StresserPanel = () => {
   };
   
 
+
   const handleCloseErrorModal = () => {
     setShowErrorModal(false);
   };
@@ -205,6 +333,7 @@ const StresserPanel = () => {
   
   return (
     <>
+    <ToastContainer />
     <div className="col-sm-12" style={{ paddingTop: '10px' }}>
         <div className="box">
             <h4 className="rmv">
@@ -335,7 +464,7 @@ const StresserPanel = () => {
         data-target="#running_modal"
         style={{marginTop: '20px',marginRight: '9px'}}
         onClick={handleAttackManager}
-      >Attack Manager <span> ({attacks.length} Running)</span></button>
+      >Attack Manager ({attacks.length} Running)</button>
         {showModal && (
         <div className="modal" id="running_modal" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-scrollable modal-md modal-dialog-centered">
@@ -410,6 +539,16 @@ const StresserPanel = () => {
               style={{marginLeft:10 ,marginTop:20}}
             >
               Get Rendom 
+            </button>
+            
+          <button
+              id="AutoAttack"
+              className="btn btn-dark btn-sm"
+              onClick={isAutoAttack ? handleStopAttack : handleAutoAttack}
+              style={{marginLeft:10 ,marginTop:20}}
+            >
+              {isAutoAttack ? <span>Stop </span>  : <span>Start </span> }
+               Auto Attack 
             </button>
           
           <br />
@@ -539,7 +678,7 @@ const StresserPanel = () => {
                 service isn't powerful enough for you, I recommend using a
                 premium IP stresser listed on our website.<br /><br />
                 <h4><font color="#4AE96D">Credits</font></h4>
-                This website is created by forky.
+                This website is created by Ghous (KinG).
               </small>
             </h4>
             <br />

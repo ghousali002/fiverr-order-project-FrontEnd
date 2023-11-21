@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./StresserZone.css";
 import Navbar from "../../Navbar/Navbar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function StresserZone() {
   const [showAdvancedParameters, setShowAdvancedParameters] = useState(false);
@@ -14,10 +16,116 @@ function StresserZone() {
   const [targetIP, setTargetIP] = useState("");
   const [port, setPort] = useState("");
   const [timeValue, setTimeValue] = useState(30);
-  const [method, setMethod] = useState("4");
+  const [method, setMethod] = useState('4');
 
   const [ErrorMsg, setErrorMsg] = useState("Error");
   const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const [isAutoAttack, setIsAutoAttack] = useState(false);
+  const [targetInfo, setTargetInfo] = useState({
+    attacks: [],
+    currentAttackIndex: 0,
+  });
+  const [dataFetched, setDataFetched] = useState(false);
+  useEffect(() => {
+    if (dataFetched && targetInfo.attacks.length > 0) {
+
+      let attackIntervalId;
+
+      const startAttackInterval = () => {
+        attackIntervalId = setInterval(() => {
+          if (targetInfo.currentAttackIndex < targetInfo.attacks.length) {
+            startAutoAttack(targetInfo.currentAttackIndex);
+            
+            console.log(targetInfo.attacks[targetInfo.currentAttackIndex]);
+            setTargetInfo((prevState) => ({
+              ...prevState,
+              currentAttackIndex: prevState.currentAttackIndex + 1,
+            }));
+            
+            
+          } else {
+            toast.success('All attacks on listed addresses have been completed.');
+            setShowErrorModal(true);
+            clearInterval(attackIntervalId);
+          }
+        }, 600000);
+      };
+
+      setIsAutoAttack(true);
+      startAttackInterval();
+
+      return () => {
+        if (attackIntervalId) {
+          clearInterval(attackIntervalId);
+        }
+      };
+    }
+  }, [dataFetched, targetInfo]);
+
+  const handleStopAttack = () => {
+    setIsAutoAttack(false);
+    setTargetInfo({
+      ...targetInfo,
+      attacks: [],
+      currentAttackIndex: 0,
+    });
+  };
+
+  function startAutoAttack(index) {
+    const { host, port, seconds,method } = targetInfo.attacks[index];
+    setTargetIP(host);
+    setPort(port);
+    setTimeValue(seconds);
+    setMethod(method);
+    AutoSendAttack(host, port, seconds, method);
+  }
+
+  const handleAutoAttack = async () => {
+    try {
+      const response = await fetch("./Data.json");
+      const data = await response.json();
+  
+      
+      setTargetInfo({
+        ...targetInfo,
+        attacks: [...targetInfo.attacks, ...data], 
+      });
+
+      toast.success('Attacks will occur one by one every 10 minutes.');
+
+  
+      setDataFetched(true);
+      console.log("handleAutoAttack", data);
+    } catch (error) {
+      setErrorMsg("File Missing or Error Fetching data");
+      setShowErrorModal(true);
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  function AutoSendAttack ( host ,port,time,method)  {
+    if (!host || !port || !time ) {
+      setErrorMsg('Please enter all fields before submitting...');
+      setShowErrorModal(true);
+      handleStopAttack();
+    } else {
+      if (!isValidIPAddress(host) || !isValidPort(port)) {
+        setErrorMsg("Please Enter the Valid values (Ipv4 or Port) before submitting...");
+        setShowErrorModal(true);
+        handleStopAttack();
+      } else {
+        const newAttack = {
+          host: host,
+          port: port,
+          time: time,
+          method:method,
+        };
+        setAttacksInProgress([...attacksInProgress, newAttack]);
+      }
+      }
+    };
 
 
   const ipAddressesArray = [
@@ -199,6 +307,7 @@ function StresserZone() {
   };
   return (
     <>
+     <ToastContainer />
       <Navbar />
       <div className="container dark-theme" style={{ padding: "4em 0em" }}>
         <div className="row text-white my-5">
@@ -590,6 +699,16 @@ function StresserZone() {
                     Get Random &nbsp;
                   </button>
                   <button
+              id="AutoAttack"
+              className="btn btn-primary text-uppercase"
+              onClick={isAutoAttack ? handleStopAttack : handleAutoAttack}
+              style={{marginLeft:10 ,marginTop:15}}
+              type="button"
+            >
+              {isAutoAttack ? <span>Stop </span>  : <span>Start </span> }
+               Auto Attack 
+            </button>
+                  <button
                     style={{ marginLeft: 9 , marginTop: 15 }}
                     type="button"
                     className="btn btn-primary text-uppercase"
@@ -786,7 +905,8 @@ function StresserZone() {
                           <td>{attack.host}</td>
                           <td>{attack.port}</td>
                           <td>{attack.time}sec</td>
-                          <td>{getMethodText(attack.method)}</td>
+                          <td>{isAutoAttack ? attack.method : getMethodText(attack.method)}</td>
+                       
                           <td>
                             <div
                               className="btn-group btn-block"
