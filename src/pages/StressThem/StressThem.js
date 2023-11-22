@@ -180,7 +180,6 @@ function StressThem() {
 
     setAttacksRunning(1);
 
-    setIsModalOpen(true);
     setIsAutoAttack(true);
     toast.success(
       "Attacks will be started automatically after every 10 minutes."
