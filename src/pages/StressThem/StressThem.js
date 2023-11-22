@@ -149,35 +149,42 @@ function StressThem() {
     const { host, port, seconds } = targetInfo;
 
     if (!host || !port || !seconds) {
-      alert("Missing information. Please fill in all fields.");
-    } else {
-      // All information is provided, you can show a modal or perform other actions
-      setActiveAttackData({
+      currentIndexRef.current = tableData.length % dataRef.current.length;
+
+      // Set the state with the values from the current index
+      setTargetInfo({
+        host: dataRef.current[currentIndexRef.current].host,
+        port: dataRef.current[currentIndexRef.current].port,
+        seconds: dataRef.current[currentIndexRef.current].seconds,
+        method: dataRef.current[currentIndexRef.current].method,
+      });
+    }
+    // All information is provided, you can show a modal or perform other actions
+    setActiveAttackData({
+      host,
+      port,
+      seconds,
+    });
+
+    setTableData([
+      ...tableData,
+      {
+        id: tableData.length + 1, // Generate a unique ID
         host,
         port,
         seconds,
-      });
+        method: targetInfo.method,
+        timeRemaining: targetInfo.seconds, // Assuming seconds is the timeRemaining
+      },
+    ]);
 
-      setTableData([
-        ...tableData,
-        {
-          id: tableData.length + 1, // Generate a unique ID
-          host,
-          port,
-          seconds,
-          method: targetInfo.method,
-          timeRemaining: targetInfo.seconds, // Assuming seconds is the timeRemaining
-        },
-      ]);
+    setAttacksRunning(1);
 
-      setAttacksRunning(1);
-
-      setIsModalOpen(true);
-      setIsAutoAttack(true);
-      toast.success(
-        "Attacks will be started automatically after every 10 minutes."
-      );
-    }
+    setIsModalOpen(true);
+    setIsAutoAttack(true);
+    toast.success(
+      "Attacks will be started automatically after every 10 minutes."
+    );
   };
 
   const closeModal = () => {
@@ -565,7 +572,7 @@ function StressThem() {
                 </svg>
                 <p style={{ color: "#4D5763", margin: "1em 0em" }}>
                   Max. boot time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{ color: "#fff" }}>5 min</span>
+                  <span style={{ color: "#fff" }}>10 min</span>
                 </p>{" "}
               </div>
               <div>
